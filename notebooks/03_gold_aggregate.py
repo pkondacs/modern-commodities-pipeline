@@ -6,7 +6,7 @@
 from pyspark.sql.functions import sum as _sum, avg
 
 # Read cleaned Silver layer data
-df_silver = spark.read.table("silver.trades_clean")
+df_silver = spark.read.table("hive_metastore.commodities.trades_clean")
 
 # --- Business Aggregation ---
 # Aggregate total volume and average price per commodity
@@ -17,10 +17,10 @@ df_gold = df_silver.groupBy("commodity").agg(
 )
 
 # Preview the aggregated result
-df_gold.display()
+# df_gold.display()
 
 # Write to Gold Delta table
-gold_table = "gold.trades_summary"
+gold_table = "hive_metastore.commodities.trades_summary"
 df_gold.write \
     .format("delta") \
     .mode("overwrite") \

@@ -6,7 +6,7 @@
 from pyspark.sql.functions import col, to_date
 
 # Read raw trade data from Bronze table
-bronze_df = spark.read.table("bronze.trades_raw")
+bronze_df = spark.read.table("hive_metastore.commodities.trades_raw")
 
 # --- Data Cleansing ---
 # Drop rows with nulls in critical fields
@@ -23,10 +23,10 @@ validated_df = clean_df.filter((col("quantity") > 0) & (col("price") > 0))
 validated_df = validated_df.withColumn("trade_value", col("quantity") * col("price"))
 
 # Preview cleaned data
-validated_df.display()
+# validated_df.display()
 
 # Write to Silver Delta table
-silver_table = "silver.trades_clean"
+silver_table = "hive_metastore.commodities.trades_clean"
 validated_df.write \
     .format("delta") \
     .mode("overwrite") \

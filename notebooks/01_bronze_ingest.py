@@ -17,7 +17,7 @@ tarde_schema = StructType([
 ])
 
 # Path to legacy CSVs (simulating SFTP dump or shared drive)
-legacy_path = "/mnt/legacy_data/legacy_trades.csv"
+legacy_path = "/FileStore/tables/legacy_trades_sample.csv"
 
 # Read legacy data
 legacy_df = spark.read \
@@ -27,10 +27,15 @@ legacy_df = spark.read \
     .withColumn("source_file", input_file_name())
 
 # Optional preview for stakeholder collaboration
-legacy_df.display()
+# legacy_df.display()
 
-# Write to Bronze Delta table
-bronze_table = "bronze.trades_raw"
+# Ensure the schema exists
+spark.sql("CREATE SCHEMA IF NOT EXISTS hive_metastore.commodities")
+
+# Define fully qualified Delta table name
+bronze_table = "hive_metastore.commodities.trades_raw"
+
+# Write to Delta
 legacy_df.write \
     .format("delta") \
     .mode("overwrite") \
